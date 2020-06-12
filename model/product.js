@@ -5,14 +5,13 @@ const Joi = require('joi');
 const productSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     description: {
         type: String,
         required: false
     },
-  
-
     price: 
         {
             type: Number,
@@ -23,6 +22,20 @@ const productSchema = mongoose.Schema({
         type:Number,
         required:false,
         default:0,
+    },
+    image:{
+        type:String,
+        required:false
+    },
+    sexe:{
+        type:String,
+        enum:["MAN","WOMEN"],
+        required:true
+    },
+    category:{
+        type:String,
+        enum:["T-SHIRT","PANTS","WATCHES","GLASSES","SHOES"],
+        required:true
     }
 });
 

@@ -6,6 +6,7 @@ const http=require('http')
 const UsersRoutes=require('./router/userRouter')
 const helmet=require('helmet')
 const app=express()
+const formidableMiddleware=require("express-formidable")
 const port =process.env.PORT || 5000;
 app.use(helmet())
 
@@ -21,12 +22,41 @@ const connection=mongoose.connection
 connection.once('open',()=>{
     console.log("Mongodb database connection successfully")
 })
+const events = [
+    {
+      event: 'fileBegin',
+      action: function (req, res, next, name, file) { /* your callback */ }
+    },
+    {
+      event: 'field',
+      action: function (req, res, next, name, value) {
+        if (!req.myFields) {
+          req.myFields = {}
+        }
+        if (req.myFields[name] == undefined) {
+          req.myFields[name] = value
+        } else {
+          let aux = req.myFields[name]
+          if (Array.isArray(req.myFields[name])) {
+            req.myFields[name].push(value)
+          } else {
+            req.myFields[name] = [aux, value]
+          }
+        }
+      }
+    }
+  ];
+  app.use(formidableMiddleware({
+    encoding: 'utf-8',
+    uploadDir: './public/files',
+    multiples: true,
+  }, events));
 
 
-
-
+const AdminRouter=require('./router/adminRouter')
+app.use('/upload',express.static('upload'))
 app.use('/', UsersRoutes);
-
+app.use('/admin',AdminRouter)
 var server = http.createServer(app);
 
 server.listen(port ,()=>{

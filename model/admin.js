@@ -32,7 +32,6 @@ const adminSchema = mongoose.Schema({
 
 function validateAdmin(user) {
     const password = {
-        password: Joi.string().min(5).max(255).required(),
         userName: Joi.string().max(255).required(),
     };
     return Joi.validate(user, password, { abortEarly: false });
