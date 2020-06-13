@@ -7,40 +7,44 @@ const { Product } = require('../model/product');
 exports.addSells=(req,res,next)=>{
     const decoded=functionUtil.verifToken(req,res)
     if(!decoded)res.status(400).json({status:400,message:"No user connected"})
-        let products;
+        let products=[];
         if(typeof req.myFields.achat==="object"){
           products=req.myFields.achat       
         }else{
-            products=req.myFields.achat
+            products.push(req.myFields.achat)
         }
-       console.log(req.myFields.achat)
-       console.log(typeof req.myFields.achat);
-       
         let newSell=new Sells({
             user:decoded.userId,
             achat:products,
             totalPrice:req.fields.totalPrice
         })
+       
         newSell.save().then(()=>{
-            products.forEach((el)=>{
-                Achat.findOne({_id:el._id}).populate('product').exec((err,products)=>{
-                    if (err) {
-                        return res
-                          .status(404)
-                          .json({ status: 404, message: "No productfound" });
-                      }else if(products){
-                         
-                        //   Product.findOne({_id:products.product._id}).then((prof)=>{
-                        //     Product.findOneAndUpdate({_id:prof._id},{
-                        //         $set:{quantity:prof.quantity-products.product.quantity}
-                        //       }).then(()=>{
-                        //           res.status(200).json({status:200,message:"sells added"})
-                        //       })
-                        //   })
-                         
-                      }
+            
+                products.forEach((el)=>{
+                    
+                    Achat.findOne({_id:el}).populate('product').exec((err,products)=>{
+                       console.log(products)
+                        
+                        if (err) {
+                            return res
+                              .status(404)
+                              .json({ status: 404, message: "No productfound" });
+                          }else if(products){
+                             
+                              Product.findOne({_id:products.product._id}).then((prof)=>{
+                                Product.findOneAndUpdate({_id:prof._id},{
+                                    $set:{quantity:prof.quantity-products.product.quantity}
+                                  }).then(()=>{
+                                      res.status(200).json({status:200,message:"sells added"})
+                                  })
+                              })
+                             
+                          }
+                    })
                 })
-            })
+            
+           
         }).catch(err=>res.status(400).json({status:400,message:err.message}))
    
    
