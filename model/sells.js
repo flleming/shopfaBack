@@ -1,28 +1,36 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+const achat=mongoose.Schema({
+    product:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'product'
 
-const sellsSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
     },
+    quantity:{
+        type:Number,
+        required:true
+    }
+})
+const sellsSchema = mongoose.Schema({
+    
     totalPrice: {
         type: Number,
         required: false
     },
+
     user: 
         {
             type: mongoose.Schema.Types.ObjectId,
            ref:"user"
         }
     ,
-    product:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'product'
-        }
+    achat:[ {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'achat'
+    }  
     ]
+  
 });
 
 
@@ -36,5 +44,6 @@ function validateSells(user) {
 
 
 module.exports.Sells = mongoose.model("sells", sellsSchema);
+module.exports.Achat=mongoose.model('achat',achat)
 module.exports.validateSells= validateSells;
 

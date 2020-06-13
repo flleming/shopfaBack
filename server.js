@@ -7,6 +7,7 @@ const UsersRoutes=require('./router/userRouter')
 const helmet=require('helmet')
 const app=express()
 const formidableMiddleware=require("express-formidable")
+const SellsRouter=require('./router/sellsRouter')
 const port =process.env.PORT || 5000;
 app.use(helmet())
 
@@ -21,6 +22,9 @@ mongoose.connect(config.mongoURL,{
 const connection=mongoose.connection
 connection.once('open',()=>{
     console.log("Mongodb database connection successfully")
+})
+app.get('/', (req, res) => {
+  res.send('Express server is up and runnings.');
 })
 const events = [
     {
@@ -57,6 +61,7 @@ const AdminRouter=require('./router/adminRouter')
 app.use('/upload',express.static('upload'))
 app.use('/', UsersRoutes);
 app.use('/admin',AdminRouter)
+app.use('/sells',SellsRouter)
 var server = http.createServer(app);
 
 server.listen(port ,()=>{

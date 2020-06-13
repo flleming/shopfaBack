@@ -3,14 +3,14 @@ const {Product}=require("../model/product")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const functionUtil=require('../utilFunction/functionUtil');
-
+const { User } = require("../model/user");
 
 
 
 
 
 exports.login = (req, res, next) => {
-  Admin.findOne({ userName: req.body.userName })
+  Admin.findOne({ userName: req.fields.userName })
     .then(user => {
       if (!user) {
         return res
@@ -18,7 +18,7 @@ exports.login = (req, res, next) => {
           .json({ status: 401, message: "User not found !" });
       }
       bcrypt
-        .compare(req.body.password, user.password)
+        .compare(req.fields.password, user.password)
         .then(valid => {
           if (!valid) {
             return res
@@ -27,8 +27,8 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             status: 200,
-            AdminId: user._id,
-            token: jwt.sign({ AdminId: user._id }, "RANDOM_TOKEN_SECRET", {
+            userId: user._id,
+            token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
               expiresIn: "240h"
             }),
             name: user.userName
@@ -51,7 +51,7 @@ exports.login = (req, res, next) => {
     }
 
 
-    Admin.findOne({ _id: decoded.AdminId })
+    Admin.findOne({ _id: decoded.userId })
       .then(user => {
         if (!user) {
           return res
@@ -69,7 +69,9 @@ exports.login = (req, res, next) => {
             image:req.fields.image?img.uploadPhoto(req.fields.image):null,
             sexe:req.fields.sexe,
             category:req.fields.category,
-            image:path
+            image:path,
+            color:req.fields.color,
+            size:req.fields.size
           })
           newproduct.save().then(()=>res.status(200).json({status:200,message:"product added"})).catch(erreur=>res.status(400).json({status:400,message:erreur.message}))
         }else{
@@ -94,7 +96,7 @@ exports.login = (req, res, next) => {
 
      var path=functionUtil.uploadPhoto(res,req.fields.photo)
     }
-    Admin.findOne({ _id: decoded.AdminId })
+    Admin.findOne({ _id: decoded.userId })
     .then(user => {
       if (!user) {
         return res
@@ -113,7 +115,9 @@ exports.login = (req, res, next) => {
             description:req.fields.description?req.fields.description:product.description,
             quantity:req.fields.quantity?req.fields.quantity:product.quantity,
             sexe:req.fields.sexe?req.fields.sexe:product.sexe,
-            category:req.fields.category?req.fields.category:product.category
+            category:req.fields.category?req.fields.category:product.category,
+            color:req.fields.color?req.fields.color:product.color,
+            size:req.fields.size?req.fields.size:product.size
           }
         }
         Product.findOneAndUpdate({_id:product._id},newProduct).then(()=>{
@@ -129,13 +133,31 @@ exports.login = (req, res, next) => {
     );
   }
 
-  exports.getProductByCategory=(req,res,next)=>{
-    Product.find().then((product)=>{
-      
-     console.log(product)
-     res.status(200).json({status:200,product:product.filter((el)=>{
-       return el.category===req.params.category
-     })})
-    }).catch(error=>res.status(400).json({status:400,message:error.message}))
+  
 
+  exports.deleteProductbyId=(req,res,next)=>{
+    const decoded=functionUtil.verifToken(req,res)
+    Product.findByIdAndDelete({_id:req.params.id}).then(()=>{
+      res.status(200).json({status:200,message:"Product was deleted"})
+    }).catch(err=>res.status(400).json({status:400,message:err.message}))
   }
+exports.getAllProduct=(req,res,next)=>{
+  const decoded=functionUtil.verifToken(req,res)
+  Product.find().then((product)=>{
+    if(!product)res.status(400).json({status:400,message:"No product found"})
+    if(!req.query.page)res.status(401).json({status:401,message:"page number"})
+    if(!req.query.per_page)res.status(402).json({status:402,message:"per_page number"})
+    res.status(200).json({status:200,product:product.slice(parseInt(req.query.page)*parseInt(req.query.per_page)-parseInt(req.query.per_page),parseInt(req.query.page)*parseInt(req.query.per_page)),nbreTotal:product.length})
+  }).catch(err=>res.status(500).json({status:500,message:err.message}))
+}
+
+exports.getallUsers=(req,res,next)=>{
+  const decoded=functionUtil.verifToken(req,res)
+  User.find().then((user)=>{
+    if(!user)res.status(400).jon({status:400,message:'No User found'})
+    res.status(200).json({status:200,users:user.map((el)=>{
+      return {userName:el.userName,email:el.email}
+    })})
+  })
+}
+

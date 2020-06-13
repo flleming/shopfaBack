@@ -36,6 +36,14 @@ const productSchema = mongoose.Schema({
         type:String,
         enum:["T-SHIRT","PANTS","WATCHES","GLASSES","SHOES"],
         required:true
+    },
+    color:{
+        type:String,
+        required:true
+    },
+    size:{
+        type:String,
+        required:true
     }
 });
 

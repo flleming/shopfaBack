@@ -1,5 +1,5 @@
 const { User, validateUser, validatePassword } = require("../model/user");
-
+const {Product}=require("../model/product")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -7,15 +7,16 @@ const jwt = require("jsonwebtoken");
 
 
 exports.login = (req, res, next) => {
-    User.findOne({ userName: req.body.userName })
+    User.findOne({$or:[{ userName: req.fields.userName },{email:req.fields.email}]})
       .then(user => {
+
         if (!user) {
           return res
             .status(401)
             .json({ status: 401, message: "User not found !" });
         }
         bcrypt
-          .compare(req.body.password, user.password)
+          .compare(req.fields.password, user.password)
           .then(valid => {
             if (!valid) {
               return res
@@ -42,14 +43,14 @@ exports.login = (req, res, next) => {
 
   async function signup(req, res, next) {
     //validate
-    const { error } = validateUser(req.body);
+    const { error } = validateUser(req.fields);
     if (error) {
       return res
         .status(400)
         .send({ status: 400, message: error.details[0].message });
     }
   
-    let userExist = await User.findOne({ userName: req.body.userName });
+    let userExist = await User.findOne({$or:[{ userName: req.fields.userName },{email:req.fields.email}]});
     if (userExist) {
       return res
         .status(400)
@@ -57,11 +58,12 @@ exports.login = (req, res, next) => {
     }
    
     bcrypt
-      .hash(req.body.password, 10)
+      .hash(req.fields.password, 10)
       .then(hash => {
         const user = new User({
-          userName: req.body.userName,
+          userName: req.fields.userName,
           password: hash,
+          email:req.fields.email
         });
   
         user
@@ -79,3 +81,17 @@ exports.login = (req, res, next) => {
   }
   
   exports.signup = signup;
+
+  exports.getProductByCategory=(req,res,next)=>{
+
+    Product.find().then((product)=>{
+      let productCategory=product.filter((el)=>{
+        return el.category===req.query.category
+      })
+      let productPaginer=productCategory.slice(parseInt(req.query.page)*parseInt(req.query.per_page)-parseInt(req.query.per_page),parseInt(req.query.page)*parseInt(req.query.per_page))
+     console.log(product)
+     res.status(200).json({status:200,product:productPaginer,nbrTotal:productCategory.length})
+    }).catch(error=>res.status(400).json({status:400,message:error.message}))
+
+  }
+
