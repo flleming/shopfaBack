@@ -5,12 +5,22 @@ const achat=mongoose.Schema({
     product:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'product'
-
     },
+  
     quantity:{
-        type:Number,
-        required:true
+            type:Number,
+            required:false,
+            default:0,
+    },
+    pending:{
+        type:Boolean,
+        default:true
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user"
     }
+    
 })
 const sellsSchema = mongoose.Schema({
     

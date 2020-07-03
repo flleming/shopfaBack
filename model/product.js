@@ -6,7 +6,6 @@ const productSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique:true
     },
     description: {
         type: String,
@@ -18,32 +17,36 @@ const productSchema = mongoose.Schema({
            required:true
         }
     ,
+   
+    image:{
+        type:String,
+        required:false
+    },
+   
+    category:{
+        type:String,
+        enum:["T-SHIRT","PANTS","WATCHES","GLASSES","SHOES"],
+        required:true,
+    
+    },
     quantity:{
         type:Number,
         required:false,
         default:0,
     },
-    image:{
-        type:String,
-        required:false
-    },
-    sexe:{
-        type:String,
-        enum:["MAN","WOMEN"],
-        required:true
-    },
-    category:{
-        type:String,
-        enum:["T-SHIRT","PANTS","WATCHES","GLASSES","SHOES"],
-        required:true
-    },
-    color:{
-        type:String,
-        required:true
-    },
+    caracterisque:{
+       color:{type:String,required:true},
+      
     size:{
         type:String,
         required:true
+    },
+    sexe:{
+        
+       type:String,
+       enum:["MAN","WOMAN"],
+       required:true
+         },
     }
 });
 
@@ -53,7 +56,7 @@ function validateProduct(user) {
       
         name: Joi.string().max(255).required(),
         price:Joi.number().required(),
-        quantity:Joi.number().default(0)
+       
     };
     return Joi.validate(user, password, { abortEarly: false });
 }

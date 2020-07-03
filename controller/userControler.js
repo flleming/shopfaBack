@@ -88,10 +88,12 @@ exports.login = (req, res, next) => {
       let productCategory=product.filter((el)=>{
         return el.category===req.query.category
       })
+       
       let productPaginer=productCategory.slice(parseInt(req.query.page)*parseInt(req.query.per_page)-parseInt(req.query.per_page),parseInt(req.query.page)*parseInt(req.query.per_page))
-     console.log(product)
+
      res.status(200).json({status:200,product:productPaginer,nbrTotal:productCategory.length})
     }).catch(error=>res.status(400).json({status:400,message:error.message}))
 
   }
+
 

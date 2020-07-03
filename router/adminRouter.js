@@ -13,4 +13,5 @@ router.delete('/deleteProduct/:id',auth,userCtrl.deleteProductbyId)
 
 router.get('/getallProduct',auth,userCtrl.getAllProduct)
 router.get('/getAllUser',userCtrl.getallUsers)
+router.delete('/deleteUserById/:id',auth,userCtrl.deleteUserById)
 module.exports = router;
