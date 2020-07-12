@@ -14,5 +14,5 @@ router.delete('/deleteAchatbyId/:id',auth,userCtrl.deleteAchatbyId)
 router.get('/getAchatByuser',auth,userCtrl.getAchatbbyUser)
 router.get('/getNewProducts',userCtrl.getNewProduct)
 router.delete('/deleteSellsById/:id',auth,userCtrl.deleteSellsById)
-router.delete('/removeAchat',auth,userCtrl.removeAchat)
+router.delete('/removeAchat/:id',auth,userCtrl.removeAchat)
 module.exports = router;

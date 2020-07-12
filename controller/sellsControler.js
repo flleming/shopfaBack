@@ -143,7 +143,7 @@ exports.deleteAchatbyId = (req, res, next) => {
     const decoded = functionUtil.verifToken(req, res)
     Achat.findByIdAndDelete({ _id: req.params.id }).then((achat) => {
         Product.findOne({ _id: achat.product }).then((prod) => {
-            Product.findOneAndUpdate({ _id: req.fields.productId }, { $set: { quantity: parseInt(prod.quantity) + parseInt(req.fields.quantity) } }).then((prod) => {
+            Product.findOneAndUpdate({ _id: prod._id }, { $set: { quantity: parseInt(prod.quantity) + parseInt(achat.quantity) } }).then((prod) => {
                 res.status(200).json({ status: 200, message: "achat was deleted" })
             }).catch(err => res.status(400).json({ status: 400, message: err.message }))
         }).catch(err => res.status(400).json({ status: 400, message: err.message }))

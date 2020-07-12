@@ -86,9 +86,9 @@ exports.login = (req, res, next) => {
 
     Product.find().then((product)=>{
       let productCategory=product.filter((el)=>{
-        return el.category===req.query.category
+        return el.category===req.query.category && el.quantity>0 && el.caracterisque.sexe===req.query.sexe
       })
-       
+       console.log(productCategory)
       let productPaginer=productCategory.slice(parseInt(req.query.page)*parseInt(req.query.per_page)-parseInt(req.query.per_page),parseInt(req.query.page)*parseInt(req.query.per_page))
 
      res.status(200).json({status:200,product:productPaginer,nbrTotal:productCategory.length})
