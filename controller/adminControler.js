@@ -100,6 +100,7 @@ Product.findOne({caracterisque:carac,category:req.fields.category}).then((prod=>
 
   exports.editProduct=(req,res,next)=>{
     const decoded=functionUtil.verifToken(req,res)
+    console.log(req.fields.photo)
     if(req.fields.photo){
 
      var path=functionUtil.uploadPhoto(res,req.fields.photo)
