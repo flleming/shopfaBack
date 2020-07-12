@@ -64,7 +64,7 @@ const carac={
     size:req.fields.size,
     sexe:req.fields.sexe,
 }
-Product.findOne({caracterisque:carac,category:req.fields.category}).then((prod=>{
+Product.findOne({name:req.fields.name, category:req.fields.category}).then((prod=>{
   if(!prod){
     let newproduct=new Product({
       name:req.fields.name,
