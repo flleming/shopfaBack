@@ -59,7 +59,7 @@ const events = [
 
 const AdminRouter=require('./router/adminRouter')
 app.use('/upload',express.static('upload'))
-app.use('/', UsersRoutes);
+app.use('/user', UsersRoutes);
 app.use('/admin',AdminRouter)
 app.use('/sells',SellsRouter)
 var server = http.createServer(app);

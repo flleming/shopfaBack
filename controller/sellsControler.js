@@ -132,6 +132,11 @@ exports.addAchat = (req, res, next) => {
 
     }).catch(err => res.status(500).json({ status: 500, message: err.message }))
 }
+exports.removeAchat=(req,res,next)=>{
+    Achat.findByIdAndDelete({_id:req.id}).then((achat)=>{
+        res.status(200).json({status:200,message:"Achat removed"})
+    }).catch(err=>res.status(400).jsoon({status:400,message:err.message}))
+}
 
 
 exports.deleteAchatbyId = (req, res, next) => {
