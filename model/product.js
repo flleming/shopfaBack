@@ -36,11 +36,15 @@ const productSchema = mongoose.Schema({
     },
     caracterisque:{
        color:{
-           type:String,required:false
+
+           type:String,
+           default:null
        },
         size:{
             type:String,
-            required:false
+            default:null
+         
+
         },
         sexe:{
            type:String,
