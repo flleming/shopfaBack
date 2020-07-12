@@ -35,18 +35,18 @@ const productSchema = mongoose.Schema({
         default:0,
     },
     caracterisque:{
-       color:{type:String,required:true},
-      
-    size:{
-        type:String,
-        required:true
-    },
-    sexe:{
-        
-       type:String,
-       enum:["MAN","WOMAN"],
-       required:true
-         },
+       color:{
+           type:String,required:true
+       },
+        size:{
+            type:String,
+            required:true
+        },
+        sexe:{
+           type:String,
+           enum:["MAN","WOMAN"],
+           required:true
+        },
     }
 });
 
